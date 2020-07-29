@@ -1,0 +1,34 @@
+<launch>
+
+	<node pkg="turtlesim" type="turtlesim_node" name="turtlesim" output="screen"/>
+
+	<node pkg="amazing_turtles" type="control" name="controller_1" output="screen">
+		<remap from="cmd_vel" to="turtle1/cmd_vel"/>
+		<param name="linear_speed" value="10.0"/>
+		<param name="angular_speed" value="10.0"/>
+
+	</node>
+
+	<node pkg="amazing_turtles" type="control" name="controller_2" output="screen">
+		<remap from="cmd_vel" to="turtle2/cmd_vel"/>
+		<param name="linear_speed" value="20.0"/>
+		<param name="angular_speed" value="20.0"/>
+		<param name="spawn_turtle_name" value="turtle2"/>
+		<param name="init_x" value="3.525"/>
+		<param name="init_y" value="2.525"/>
+
+
+
+	</node>
+
+	<node pkg="amazing_turtles" type="control" name="controller_3" output="screen">
+		<remap from="cmd_vel" to="turtle3/cmd_vel"/>
+		<param name="linear_speed" value="5.0"/>
+		<param name="angular_speed" value="5.0"/>
+		<param name="spawn_turtle_name" value="turtle3"/>
+		<param name="init_x" value="8.525"/>
+		<param name="init_y" value="2.525"/>
+
+	</node>
+
+</launch>
