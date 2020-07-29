@@ -16,13 +16,12 @@ int main(int argc, char **argv)
   {
 
     std_msgs::String msg;
-
     msg.data = "MARTI";
 
     name_pub.publish(msg);
 
-    ros::spinOnce();
 
+    ros::spinOnce();
     loop_rate.sleep();
   }
 

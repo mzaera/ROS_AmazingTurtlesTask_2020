@@ -211,3 +211,9 @@ add_executable(beginner src/beginner.cpp)
 target_link_libraries(beginner 
 ${catkin_LIBRARIES}
 )
+
+add_executable(normal1 src/normal1.cpp)
+
+target_link_libraries(normal1 
+${catkin_LIBRARIES}
+)
