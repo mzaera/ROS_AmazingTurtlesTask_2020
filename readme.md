@@ -1,8 +1,6 @@
-# Beginner.cpp
+# Amazing_turtles pkg
 
-Beginner is a cpp file from "amazing_turtles" ROS package for printing the name "MARTI" in a specific ROS topic.
-
-## Installation
+## 1. Installation
 
 You can obtain the package form [GitHub](https://github.com/mzaera/RobotCraft_ROS_Task). Or using terminal:
 
@@ -10,7 +8,12 @@ You can obtain the package form [GitHub](https://github.com/mzaera/RobotCraft_RO
 git clone https://github.com/mzaera/RobotCraft_ROS_Task.git
 ```
 
-## Usage
+## 2. Beginner
+
+Beginner will print the name "MARTI" in a ROS topic called name_topic.
+
+
+### Usage
 
 Terminal 1, in the catkin folder:
 ```bash
@@ -28,9 +31,29 @@ Terminal 3:
 rostopic echo /name_topic
 ```
 
-## Contributing
+## 3. Normal1
+
+Normal1_launcher will call the beginner.cpp and Normal1.cpp programs.
+
+Normal1.cpp it will read the ROS topic called name_topic, and will print its info to the ROS terminal.
+
+
+### Usage
+
+Terminal 1, in the catkin folder:
+```bash
+catkin_make
+roscore
+```
+
+Terminal 2:
+```bash
+roslaunch amazing_turtles normal1_launch.launch
+```
+
+## 4. Contributing
 Corrections are welcome. For major changes, please contact Marti Zaera.
 
 
-## License
+## 5. License
 [RobotCraft](https://robotcraft.ingeniarius.pt/)

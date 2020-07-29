@@ -217,3 +217,9 @@ add_executable(normal1 src/normal1.cpp)
 target_link_libraries(normal1 
 ${catkin_LIBRARIES}
 )
+
+add_executable(normal2 src/normal2.cpp)
+
+target_link_libraries(normal2 
+${catkin_LIBRARIES}
+)
