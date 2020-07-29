@@ -1,0 +1,8 @@
+<launch>
+
+	<node pkg="amazing_turtles" type="beginner" name="controller_1" output="screen">
+
+
+	</node>
+
+</launch>
