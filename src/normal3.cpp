@@ -4,12 +4,9 @@
 #include "geometry_msgs/Twist.h"
 #include "turtlesim/Spawn.h"
 
-/*#define PI 3.1415926535898
-
-void pose(){
+#define PI 3.1415926535898
 
 
-}*/
 
 
 class TurtleController
@@ -19,7 +16,7 @@ private:
     ros::NodeHandle n;
 
     ros::Publisher cmd_vel_pub;
-    //ros::Subscriber sub = n.subscribe("/turtle1/pose", 1000, pose);
+    //ros::Subscriber sub = n.subscribe("turtle1/pose", 1000, boost::bind(&TurtleController::callBack, this, 1));
 
 
 public:
@@ -62,16 +59,16 @@ public:
 			}
 
 
-
-
-
-
             ros::spinOnce();
             loop_rate.sleep();
 
         }
     }
 
+    void callBack(){
+
+
+    }
 
 };
 
