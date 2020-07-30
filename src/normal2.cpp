@@ -12,16 +12,6 @@ private:
     ros::Publisher cmd_vel_pub;
   	ros::NodeHandle n;
 
-
-    geometry_msgs::Twist calculateCommand()
-    {
-        auto msg = geometry_msgs::Twist();
-        msg.linear.x = 1.0;
-        msg.angular.z = 0.0;
-        return msg;
-    }
-
-
 public:
     TurtleController(){
 
@@ -33,12 +23,34 @@ public:
     void run(){
 
         ros::Rate loop_rate(10);
+        auto msg = geometry_msgs::Twist();
+
+		ros::Time start_time = ros::Time::now();
+		ros::Duration transcorregut = ros::Time::now() - start_time;
+
+		ros::Duration periode1(2.0); 
+		ros::Duration periode2(3.0); 
 
         while (ros::ok())
         {
+        	transcorregut = ros::Time::now() - start_time;
 
-            auto msg = calculateCommand();
-            this->cmd_vel_pub.publish(msg);
+        	if( transcorregut < periode1){
+
+       			msg.linear.x = 1.0;
+        		msg.angular.z = 0.0;
+            	this->cmd_vel_pub.publish(msg);
+
+			}else if( transcorregut < periode2) {
+
+       			msg.linear.x = 0.0;
+        		msg.angular.z = 1.0;
+            	this->cmd_vel_pub.publish(msg);
+
+			}else{
+				start_time = ros::Time::now();
+			}
+
 
 
 
@@ -46,9 +58,9 @@ public:
 
             ros::spinOnce();
             loop_rate.sleep();
+
         }
     }
-
 };
 
 

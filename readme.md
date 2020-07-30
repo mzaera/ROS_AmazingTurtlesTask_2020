@@ -10,7 +10,9 @@ git clone https://github.com/mzaera/RobotCraft_ROS_Task.git
 
 ## 2. Beginner
 
-Beginner will print the name "MARTI" in a ROS topic called name_topic.
+Beginner_launcher runs the beginner.cpp
+
+Beginner.cpp will print the name "MARTI" in a ROS topic called name_topic.
 
 
 ### Usage
@@ -33,9 +35,9 @@ rostopic echo /name_topic
 
 ## 3. Normal1
 
-Normal1_launcher will call the beginner.cpp and Normal1.cpp programs.
+Normal1_launcher runs the beginner.cpp and Normal1.cpp programs.
 
-Normal1.cpp it will read the ROS topic called name_topic, and will print its info to the ROS terminal.
+Normal1.cpp reads the ROS topic called name_topic, and will print its info to the ROS terminal.
 
 
 ### Usage
