@@ -28,8 +28,8 @@ public:
 		ros::Time start_time = ros::Time::now();
 		ros::Duration transcorregut = ros::Time::now() - start_time;
 
-		ros::Duration periode1(2.0); 
-		ros::Duration periode2(3.0); 
+		ros::Duration periode1(3.0); 
+		ros::Duration periode2(4.0); 
 
         while (ros::ok())
         {
@@ -37,14 +37,14 @@ public:
 
         	if( transcorregut < periode1){
 
-       			msg.linear.x = 1.0;
+       			msg.linear.x = 1.5;
         		msg.angular.z = 0.0;
             	this->cmd_vel_pub.publish(msg);
 
 			}else if( transcorregut < periode2) {
 
        			msg.linear.x = 0.0;
-        		msg.angular.z = 1.0;
+        		msg.angular.z = 2.9;
             	this->cmd_vel_pub.publish(msg);
 
 			}else{
