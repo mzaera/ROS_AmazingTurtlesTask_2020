@@ -2,83 +2,43 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
-#include "turtlesim/Spawn.h"
+#include "turtlesim/Pose.h"
+
 
 #define PI 3.1415926535898
 
+turtlesim::Pose actual_pose;
 
-
-
-class TurtleController
+void poseCallback(const turtlesim::PoseConstPtr& pose)
 {
-private:
-    
-    ros::NodeHandle n;
+    actual_pose.theta = pose->theta;
+    actual_pose.x = pose->x;
+    actual_pose.y = pose->y;
 
-    ros::Publisher cmd_vel_pub;
-    //ros::Subscriber sub = n.subscribe("turtle1/pose", 1000, boost::bind(&TurtleController::callBack, this, 1));
+    ROS_INFO("x: [%f] y: [%f] theta: [%f] ",actual_pose.x, actual_pose.y, actual_pose.theta);
 
-
-public:
-    TurtleController(){
-
-        this->n = ros::NodeHandle();
-   
-        this->cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-    }
-
-    void run(){
-
-        ros::Rate loop_rate(10);
-        auto msg = geometry_msgs::Twist();
-
-		ros::Time start_time = ros::Time::now();
-		ros::Duration transcorregut = ros::Time::now() - start_time;
-
-		ros::Duration periode1(2.0); 
-		ros::Duration periode2(3.0); 
-
-        while (ros::ok())
-        {
-        	transcorregut = ros::Time::now() - start_time;
-
-        	if( transcorregut < periode1){
-
-       			msg.linear.x = 1.0;
-        		msg.angular.z = 0.0;
-            	this->cmd_vel_pub.publish(msg);
-
-			}else if( transcorregut < periode2) {
-
-       			msg.linear.x = 0.0;
-        		msg.angular.z = 2.094395102;
-            	this->cmd_vel_pub.publish(msg);
-
-			}else{
-				start_time = ros::Time::now();
-			}
-
-
-            ros::spinOnce();
-            loop_rate.sleep();
-
-        }
-    }
-
-    void callBack(){
-
-
-    }
-
-};
-
+}
 
 int main(int argc, char **argv){
 
-    ros::init(argc, argv,"normal2");
+    ros::init(argc, argv,"normal3");
 
-    auto controller = TurtleController();
-    controller.run();
+    ros::NodeHandle n;
+    ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+    ros::Subscriber sub = n.subscribe("turtle1/pose", 1000, poseCallback);
+    ros::Rate loop_rate(10);
 
+    auto msg = geometry_msgs::Twist();
+
+    while (ros::ok())
+    {
+
+        msg.linear.x = 1.0;
+        msg.angular.z = 1.0;
+        cmd_vel_pub.publish(msg);
+
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
     return 0;
 }
