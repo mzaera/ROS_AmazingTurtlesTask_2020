@@ -4,7 +4,7 @@
 	</node>
 
 
-	<node pkg="amazing_turtles" type="normal1" name="controller_2" output="screen">
+	<node pkg="amazing_turtles" type="normal_Part1" name="controller_2" output="screen">
 	</node>
 
 </launch>

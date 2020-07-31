@@ -212,20 +212,15 @@ target_link_libraries(beginner
 ${catkin_LIBRARIES}
 )
 
-add_executable(normal1 src/normal1.cpp)
+add_executable(normal_Part1 src/normal_Part1.cpp)
 
-target_link_libraries(normal1 
+target_link_libraries(normal_Part1 
 ${catkin_LIBRARIES}
 )
 
-add_executable(normal2 src/normal2.cpp)
+add_executable(normal_Part2 src/normal_Part2.cpp)
 
-target_link_libraries(normal2 
+target_link_libraries(normal_Part2
 ${catkin_LIBRARIES}
 )
 
-add_executable(normal3 src/normal3.cpp)
-
-target_link_libraries(normal3 
-${catkin_LIBRARIES}
-)

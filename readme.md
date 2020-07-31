@@ -33,11 +33,11 @@ Terminal 3:
 rostopic echo /name_topic
 ```
 
-## 3. Normal1
+## 3. Normal_Part1
 
-Normal1_launcher runs the beginner.cpp and Normal1.cpp programs.
+Normal_Part1_launcher runs the beginner.cpp and Normal_Part1.cpp programs.
 
-Normal1.cpp reads the ROS topic called name_topic, and will print its info to the ROS terminal.
+Normal_Part1.cpp reads the ROS topic called name_topic, and will print its info to the ROS terminal.
 
 
 ### Usage
@@ -50,12 +50,32 @@ roscore
 
 Terminal 2:
 ```bash
-roslaunch amazing_turtles normal1_launch.launch
+roslaunch amazing_turtles normal_Part1_launch.launch
 ```
 
-## 4. Contributing
+## 4. Normal_Part2
+
+Normal_Part2_launcher runs the turtlesim_node.cpp from turtlesim.pkg and Normal_Part2.cpp programs.
+
+Normal_Part2.cpp creates a triangular path using the turtlebot simulator.
+
+
+### Usage
+
+Terminal 1, in the catkin folder:
+```bash
+catkin_make
+roscore
+```
+
+Terminal 2:
+```bash
+roslaunch amazing_turtles normal_Part2_launch.launch
+```
+
+## 5. Contributing
 Corrections are welcome. For major changes, please contact Marti Zaera.
 
 
-## 5. License
+## 6. License
 [RobotCraft](https://robotcraft.ingeniarius.pt/)
