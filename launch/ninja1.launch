@@ -1,0 +1,15 @@
+<launch>
+
+	<node pkg="turtlesim" type="turtlesim_node" name="turtlesim" output="screen"/>
+
+	<node pkg="amazing_turtles" type="Service_server_ninja" name="controller_2" output="screen">
+		<remap from="cmd_vel" to="turtle1/cmd_vel"/>
+	</node>
+
+	<node pkg="amazing_turtles" type="ninja_controller" name="controller_3" output="screen">
+		<remap from="cmd_vel" to="turtle1/cmd_vel"/>
+
+	</node>
+
+
+</launch>
