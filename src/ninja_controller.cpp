@@ -13,15 +13,15 @@ int main(int argc, char **argv){
 
     ros::init(argc, argv,"ninja_controller");
 
+
     ros::NodeHandle n;
     ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-    //ros::Subscriber sub = n.subscribe("turtle1/pose", 1000, poseCallback);
+    
     ros::Rate loop_rate(10);
 
     ros::ServiceClient client = n.serviceClient<std_srvs::SetBool>("ninja_controller");
     std_srvs::SetBool srv;
 
-    srv.request.data = true;
 
     bool test = true;
 
