@@ -5,39 +5,49 @@
 #include <std_srvs/SetBool.h>
 #include <cstdlib>
 
+bool final=false;
 
+void detect(const std_msgs::String::ConstPtr& msg)
+{
+    ROS_INFO("I heard: [%s]", msg->data.c_str());
 
-auto msg = geometry_msgs::Twist();
+    std_msgs::String resp;
+    resp.data = msg->data.c_str();
+
+    if(resp.data=="TRUE"){
+        final=true;
+    }else if (resp.data=="FALSE"){
+        final=false;
+    }
+
+}
+
 
 int main(int argc, char **argv){
 
     ros::init(argc, argv,"ninja_controller");
 
-
     ros::NodeHandle n;
+
     ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-    
+    auto msg = geometry_msgs::Twist();
+
+    ros::Subscriber sub = n.subscribe("bool_topic", 1000,detect);
+
     ros::Rate loop_rate(10);
-
-    ros::ServiceClient client = n.serviceClient<std_srvs::SetBool>("ninja_controller");
-    std_srvs::SetBool srv;
-
-
-    bool test = true;
 
     while (ros::ok())
     {
-
-        test=client.call(srv);
-        
-        if(test){
-
-             ROS_INFO(" funcionaaaaaaa!!!!!!!!!!");
-
+        if(final){
+            msg.linear.x = 1.0;
+            msg.angular.z = 1.0;
         }else{
-               //ROS_INFO(" nidea");
-          
+            msg.linear.x = 0.0;
+            msg.angular.z = 0.0;  
         }
+
+
+        cmd_vel_pub.publish(msg);
 
         ros::spinOnce();
         loop_rate.sleep();
