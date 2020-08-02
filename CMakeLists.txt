@@ -224,9 +224,9 @@ target_link_libraries(normal_Part2
 ${catkin_LIBRARIES}
 )
 
-add_executable(Service_server_ninja src/Service_server_ninja.cpp)
+add_executable(ninja_service src/ninja_service.cpp)
 
-target_link_libraries(Service_server_ninja
+target_link_libraries(ninja_service
 ${catkin_LIBRARIES}
 )
 
