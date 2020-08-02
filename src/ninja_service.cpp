@@ -2,57 +2,90 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
+#include "turtlesim/Pose.h"
 #include <std_srvs/SetBool.h>
 
-bool service_bool;
-geometry_msgs::Twist guardat;
 
-bool Service_callback(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response)
+class Turtle_Srv
 {
-  if(request.data){
-    response.success = true;
-    response.message="You can use teleop_twist_keyboard";
-    service_bool = true;
-  }else{
-    response.success = true;
-    response.message="You can not use teleop_twist_keyboard";
-    service_bool = false ;
-  }
+private:
 
-  return true;
-}
+    ros::NodeHandle n;
+    ros::Subscriber sub;
+    ros::Publisher cmd_vel_pub;
+    ros::ServiceServer service;
 
+    geometry_msgs::Twist guardat;
+    geometry_msgs::Twist msg;
 
-void Move_callback(const geometry_msgs::Twist rebut)
-{
-  guardat=rebut;
-}
+    bool service_bool;
+      
 
-
-int main(int argc, char **argv)
-{
-  ros::init(argc, argv, "ninja_service");
-  ros::NodeHandle n;
-
-  ros::ServiceServer service = n.advertiseService("ninja_service", Service_callback);
-
-  ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-  auto msg = geometry_msgs::Twist();
-
-  ros::Subscriber sub = n.subscribe("keyboard/cmd_vel", 1000, Move_callback);
-
-  ros::Rate loop_rate(10);
-
-  while (ros::ok())
-  {
-
-    if(service_bool){
-      cmd_vel_pub.publish(guardat);
+public:
+    Turtle_Srv()
+    {
+        this->n = ros::NodeHandle();
+        this->sub = n.subscribe("keyboard/cmd_vel", 1000, &Turtle_Srv::Move_callback, this );
+        this->cmd_vel_pub =  n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        this->service = n.advertiseService("ninja_service", &Turtle_Srv::Service_callback, this);
+        ros::Duration(1).sleep();
     }
 
-    ros::spinOnce();
-    loop_rate.sleep();
-  }
+    void run(){
 
-  return 0;
+        ros::Rate loop_rate(100);
+
+        while (ros::ok())
+        {
+          if(this->service_bool){
+            this->cmd_vel_pub.publish(this->guardat);
+          }
+
+
+            ros::spinOnce();
+            loop_rate.sleep();
+        }
+    }
+
+    bool Service_callback(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response)
+    {
+      if(request.data){
+        response.success = true;
+        response.message="You can use teleop_twist_keyboard";
+        this->service_bool = true;
+      }else{
+        response.success = true;
+        response.message="You can not use teleop_twist_keyboard";
+        this->service_bool = false ;
+      }
+
+      return true;
+    }
+
+    void Move_callback(const geometry_msgs::Twist rebut)
+    {
+      this->guardat=rebut;
+    }
+
+};
+
+
+int main(int argc, char **argv){
+
+    ros::init(argc, argv, "ninja_service");
+
+    auto controller = Turtle_Srv();
+    controller.run();
+
+    return 0;
 }
+
+
+
+
+
+
+
+
+
+

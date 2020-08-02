@@ -4,114 +4,133 @@
 #include "geometry_msgs/Twist.h"
 #include "turtlesim/Pose.h"
 
-
 #define PI 3.1415926535898
 
-int part = 0;
-turtlesim::Pose actual_pose;
-auto msg = geometry_msgs::Twist();
-
-
-void poseCallback(const turtlesim::PoseConstPtr& pose)
+class Turtle_Triangle
 {
-    actual_pose.theta = pose->theta;
-    actual_pose.x = pose->x;
-    actual_pose.y = pose->y;
+private:
 
-}
+    ros::NodeHandle n;
+    ros::Subscriber sub;
+    ros::Publisher cmd_vel_pub;
 
-void triangle(){
-    switch(part){
+    turtlesim::Pose actual_pose;
+    geometry_msgs::Twist msg;
 
-        case 0:
+    int part = 0;
+      
 
-            if(actual_pose.x<=8.0 ){
-                msg.linear.x = 1.0;
-                msg.angular.z = 0.0;
-            }else{
-                part++;
-            }
-        break;
+public:
+    Turtle_Triangle()
+    {
+        this->n = ros::NodeHandle();
+        this->sub = n.subscribe("turtle1/pose", 1000, &Turtle_Triangle::pose_Callback, this );
+        this->cmd_vel_pub =  n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        ros::Duration(1).sleep();
+    }
 
-        case 1:
-            if ( actual_pose.theta < 2.35619449){
-                msg.linear.x = 0.0;
-                msg.angular.z = 1.0;
-            } else {
-                part++;
-            }                
-        break;
+    void run(){
 
-        case 2:
-            if ( actual_pose.x > 5.544445){
-                msg.linear.x = 1.0;
-                msg.angular.z = 0.0;
-            } else {
-                part++;
-            }                
-        break;
+        ros::Rate loop_rate(100);
 
-        case 3:
-            if ( actual_pose.theta > 0){
-                msg.linear.x = 0.0;
-                msg.angular.z = 1.0;
-            } else {
-                part++;
-            }                
-        break;
+        while (ros::ok())
+        {
 
-        case 4:
-            if ( actual_pose.theta < (-PI/2) ){
-                msg.linear.x = 0.0;
-                msg.angular.z = 1.0;
-            } else {
-                part++;
-            }            
-        break;
+            this->triangle();
+            this->cmd_vel_pub.publish(this->msg);
 
-        case 5:
-            if ( actual_pose.y > 5.544445 ){
-                msg.linear.x = 1.0;
-                msg.angular.z = 0.0;
-            } else {
-                part++;
-            }            
-        break;
+            ros::spinOnce();
+            loop_rate.sleep();
+        }
+    }
 
-        case 6:
-            if ( actual_pose.theta < 0 ){
-                msg.linear.x = 0.0;
-                msg.angular.z = 1.0;
-            } else {
-                part=0;
-            }            
-        break;
+    void pose_Callback(const turtlesim::PoseConstPtr& pose)
+    {
+        this->actual_pose.theta = pose->theta;
+        this->actual_pose.x = pose->x;
+        this->actual_pose.y = pose->y;
+    }
+
+    void triangle(){
+        switch(this->part){
+
+            case 0:
+
+                if(this->actual_pose.x<=8.0 ){
+                    this->msg.linear.x = 1.0;
+                    this->msg.angular.z = 0.0;
+                }else{
+                    this->part++;
+                }
+            break;
+
+            case 1:
+                if ( this->actual_pose.theta < 2.35619449){
+                    this->msg.linear.x = 0.0;
+                    this->msg.angular.z = 1.0;
+                } else {
+                    this->part++;
+                }                
+            break;
+
+            case 2:
+                if ( this->actual_pose.x > 5.544445){
+                    this->msg.linear.x = 1.0;
+                    this->msg.angular.z = 0.0;
+                } else {
+                    this->part++;
+                }                
+            break;
+
+            case 3:
+                if ( this->actual_pose.theta > 0){
+                    this->msg.linear.x = 0.0;
+                    this->msg.angular.z = 1.0;
+                } else {
+                    this->part++;
+                }                
+            break;
+
+            case 4:
+                if ( this->actual_pose.theta < (-PI/2) ){
+                    this->msg.linear.x = 0.0;
+                    this->msg.angular.z = 1.0;
+                } else {
+                    this->part++;
+                }            
+            break;
+
+            case 5:
+                if ( this->actual_pose.y > 5.544445 ){
+                    this->msg.linear.x = 1.0;
+                    this->msg.angular.z = 0.0;
+                } else {
+                    this->part++;
+                }            
+            break;
+
+            case 6:
+                if ( this->actual_pose.theta < 0 ){
+                    this->msg.linear.x = 0.0;
+                    this->msg.angular.z = 1.0;
+                } else {
+                    this->part=0;
+                }            
+            break;
+
+        }
 
     }
 
-}
+};
+
 
 int main(int argc, char **argv){
 
-    ros::init(argc, argv,"normal3");
+    ros::init(argc, argv, "normal_Part2");
 
-    ros::NodeHandle n;
-    ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-    ros::Subscriber sub = n.subscribe("turtle1/pose", 1000, poseCallback);
-    ros::Rate loop_rate(100);
+    auto controller = Turtle_Triangle();
+    controller.run();
 
-    ros::Duration(1).sleep();
-
-
-    while (ros::ok())
-    {
-
-        
-        triangle();
-
-        cmd_vel_pub.publish(msg);
-        ros::spinOnce();
-        loop_rate.sleep();
-    }
     return 0;
 }
