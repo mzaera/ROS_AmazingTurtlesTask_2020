@@ -230,8 +230,4 @@ target_link_libraries(Service_server_ninja
 ${catkin_LIBRARIES}
 )
 
-add_executable(ninja_controller src/ninja_controller.cpp)
 
-target_link_libraries(ninja_controller
-${catkin_LIBRARIES}
-)

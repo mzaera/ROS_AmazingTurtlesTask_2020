@@ -6,10 +6,6 @@
 		<remap from="cmd_vel" to="turtle1/cmd_vel"/>
 	</node>
 
-	<node pkg="amazing_turtles" type="ninja_controller" name="controller_3" output="screen">
-		<remap from="cmd_vel" to="turtle1/cmd_vel"/>
-
-	</node>
 
 
 </launch>
