@@ -6,6 +6,14 @@
 #include <cstdlib>
 
 bool final=false;
+geometry_msgs::Twist rebut_gen;
+
+void move(const geometry_msgs::Twist rebut)
+{
+rebut_gen=rebut;
+}
+
+
 
 void detect(const std_msgs::String::ConstPtr& msg)
 {
@@ -29,25 +37,30 @@ int main(int argc, char **argv){
 
     ros::NodeHandle n;
 
-    ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+    ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 1000);
     auto msg = geometry_msgs::Twist();
 
     ros::Subscriber sub = n.subscribe("bool_topic", 1000,detect);
+    ros::Subscriber sub2 = n.subscribe("keyboard/cmd_vel", 1000, move);
 
     ros::Rate loop_rate(10);
 
     while (ros::ok())
     {
         if(final){
-            msg.linear.x = 1.0;
-            msg.angular.z = 1.0;
+            //msg.linear.x = 1.0;
+            //msg.angular.z = 1.0;
+            //cmd_vel_pub.publish(msg);
+            cmd_vel_pub.publish(rebut_gen);
+
         }else{
             msg.linear.x = 0.0;
             msg.angular.z = 0.0;  
+            cmd_vel_pub.publish(msg);
+
         }
 
 
-        cmd_vel_pub.publish(msg);
 
         ros::spinOnce();
         loop_rate.sleep();
