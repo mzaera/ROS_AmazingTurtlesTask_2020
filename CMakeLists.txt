@@ -57,3 +57,9 @@ add_executable(v2_normal_Part2 src/v2_normal_Part2.cpp)
 target_link_libraries(v2_normal_Part2
 ${catkin_LIBRARIES}
 )
+
+add_executable(v2_ninja_service src/v2_ninja_service.cpp)
+
+target_link_libraries(v2_ninja_service
+${catkin_LIBRARIES}
+)

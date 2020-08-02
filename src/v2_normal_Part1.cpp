@@ -2,8 +2,6 @@
 #include "std_msgs/String.h"
 
 
-
-
 class Listener
 {
 private:

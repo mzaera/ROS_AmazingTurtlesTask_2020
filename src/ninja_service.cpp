@@ -2,7 +2,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
-
 #include <std_srvs/SetBool.h>
 
 bool service_bool;
@@ -37,7 +36,7 @@ int main(int argc, char **argv)
 
   ros::ServiceServer service = n.advertiseService("ninja_service", Service_callback);
 
-  ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 1000);
+  ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
   auto msg = geometry_msgs::Twist();
 
   ros::Subscriber sub = n.subscribe("keyboard/cmd_vel", 1000, Move_callback);
