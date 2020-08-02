@@ -231,3 +231,10 @@ ${catkin_LIBRARIES}
 )
 
 
+
+
+add_executable(v2_normal_Part1 src/v2_normal_Part1.cpp)
+
+target_link_libraries(v2_normal_Part1
+${catkin_LIBRARIES}
+)
