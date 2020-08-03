@@ -43,4 +43,10 @@ target_link_libraries(ninja_service
 ${catkin_LIBRARIES}
 )
 
+add_executable(race_service src/race_service.cpp)
+
+target_link_libraries(race_service
+${catkin_LIBRARIES}
+)
+
 
