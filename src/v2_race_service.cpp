@@ -26,7 +26,10 @@ private:
     turtlesim::Pose actual_pose;
     geometry_msgs::Twist msg;
 
-    bool print;
+    ros::Time start_time;
+
+    bool info;
+
 
 public:
     Turtle(std::string turtle_name, std::string sub_topic, std::string pub_topic)
@@ -36,7 +39,6 @@ public:
         this->sub = nh.subscribe(sub_topic, 1000, &Turtle::pose_Callback, this );
         this->cmd_vel =  nh.advertise<geometry_msgs::Twist>(pub_topic, 1000);
 
-        this->print =false;
         ros::Duration(0.1).sleep();
     }
 
@@ -48,27 +50,29 @@ public:
         if(this->actual_pose.x < 7.0 ){
             this->msg.linear.x = this->RandomFloat( 0.5, 2.5 );
             this->cmd_vel.publish(this->msg);
-        }else if (!this->print){
-            this->msg.linear.x = 0.0;
-            this->cmd_vel.publish(this->msg);
-            ROS_INFO("hola mundo");
-            this->print=true;
+            this->info=true;
         }else{
             this->msg.linear.x = 0.0;
-            this->cmd_vel.publish(this->msg);    
+            this->cmd_vel.publish(this->msg);
+            if(info){
+                ROS_INFO("HE ACABAT!");
+                this->info=false;
+            }
         }
 
     }
 
-    void empty(){
+    void start(){
+        this->start_time = ros::Time::now();
+        ros::Duration timeout(2.0); 
+        while(ros::Time::now() - this->start_time < timeout) {
+            this->msg.linear.x = 0.0;
+            this->cmd_vel.publish(this->msg);
+            this->info=false;
+        }
 
     }
 
-    void restart(){
-        this->print=false;
-        this->msg.linear.x=0.0;
-        this->actual_pose.x=0.0;
-    }
 
     float RandomFloat(float a, float b) {
         float random = ((float) rand()) / (float) RAND_MAX;
@@ -131,11 +135,12 @@ int main(int argc, char **argv){
 
     ros::ServiceServer service= n.advertiseService("v2_race_service", Service_callback);
 
+
     auto player1 = Turtle("player1","player1/pose", "player1/cmd_vel");
     auto player2 = Turtle("player2","player2/pose", "player2/cmd_vel");
 
-    bool turt1=false;
-    bool turt2=false;
+
+
 
 
     ros::Rate loop_rate(1000);
@@ -146,11 +151,10 @@ int main(int argc, char **argv){
                 kill("turtle1");
                 spawn(1.0,6.54,"player1");
                 spawn(1.0,4.54,"player2");
+                ros::Duration(0.2).sleep();
 
-                ros::Duration(0.25).sleep();
-                player1.empty();
-                player2.empty();
-                ros::Duration(0.25).sleep();
+                player1.start();
+                player2.start();
 
                 start = false;
                 need_to_kill = true;
@@ -161,15 +165,14 @@ int main(int argc, char **argv){
        
 
         }else if (need_to_kill){
-            player1.restart();
-            player2.restart();
+
             kill("player1");
             kill("player2");
+
             spawn(5.544445,5.544445,"turtle1");
             start = true;
 
             need_to_kill = false;
-
         }
 
         ros::spinOnce();
