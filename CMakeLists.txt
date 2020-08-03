@@ -49,4 +49,10 @@ target_link_libraries(race_service
 ${catkin_LIBRARIES}
 )
 
+add_executable(v2_race_service src/v2_race_service.cpp)
+
+target_link_libraries(v2_race_service
+${catkin_LIBRARIES}
+)
+
 

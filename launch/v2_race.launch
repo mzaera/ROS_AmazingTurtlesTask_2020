@@ -1,0 +1,11 @@
+<launch>
+
+	<node pkg="turtlesim" type="turtlesim_node" name="turtlesim" output="screen"/>
+
+	<node pkg="amazing_turtles" type="v2_race_service" name="controller_2" output="screen">
+		<remap from="cmd_vel" to="turtle1/cmd_vel"/>
+	</node>
+
+
+
+</launch>

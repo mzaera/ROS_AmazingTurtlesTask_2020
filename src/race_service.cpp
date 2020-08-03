@@ -19,10 +19,18 @@ private:
 
     ros::NodeHandle n;
 
+    ros::Subscriber sub;
+    ros::Subscriber sub2;
+
     ros::Publisher cmd_vel_player1;
     ros::Publisher cmd_vel_player2;
 
     ros::ServiceServer service;
+
+    turtlesim::Pose player1_actual_pose;
+    turtlesim::Pose player2_actual_pose;
+
+
 
     geometry_msgs::Twist msg;
 
@@ -40,6 +48,9 @@ public:
         this->cmd_vel_player2 =  n.advertise<geometry_msgs::Twist>("player2/cmd_vel", 1000);
         this->service = n.advertiseService("race_service", &Turtle_Srv::Service_callback, this);
         
+        this->sub = n.subscribe("player1/pose", 1000, &Turtle_Srv::pose_Callback_player1, this );
+        this->sub2 = n.subscribe("player2/pose", 1000, &Turtle_Srv::pose_Callback_player2, this );
+
         ros::Duration(0.2).sleep();
 
         this->kill("turtle1");
@@ -115,6 +126,14 @@ public:
       return true;
     }
 
+    void pose_Callback_player1(const turtlesim::PoseConstPtr& pose){
+        this->player1_actual_pose.x = pose->x;
+    }
+
+    void pose_Callback_player2(const turtlesim::PoseConstPtr& pose){
+        this->player2_actual_pose.x = pose->x;
+    }
+
     void race(){
 
         switch(this->part){
@@ -129,15 +148,18 @@ public:
             break;
 
             case 1:
+               // if(this->player1_actual_pose.x < 10 && this->player2_actual_pose.x < 10 ){
                     this->msg.linear.x = this->RandomFloat( 1.0, 2.5 );
                     this->cmd_vel_player1.publish(this->msg);
                     this->msg.linear.x = this->RandomFloat( 1.0, 2.5 );
                     this->cmd_vel_player2.publish(this->msg);
-
+              //  }else{
+                    this->part++;
+               // }
             break;
 
             case 2:
-
+                //this->service_bool=false;
             break;
         }
     }
