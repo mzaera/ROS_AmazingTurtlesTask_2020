@@ -55,7 +55,10 @@ public:
             this->msg.linear.x = 0.0;
             this->cmd_vel.publish(this->msg);
             if(info){
-                ROS_INFO("HE ACABAT!");
+                ROS_INFO("THE TURTLE CALLED:");
+                ROS_INFO_STREAM(this->name);
+                ROS_INFO("JUST FINISHED THE RACE! \n\n");
+
                 this->info=false;
             }
         }
@@ -64,7 +67,7 @@ public:
 
     void start(){
         this->start_time = ros::Time::now();
-        ros::Duration timeout(2.0); 
+        ros::Duration timeout(1.0); 
         while(ros::Time::now() - this->start_time < timeout) {
             this->msg.linear.x = 0.0;
             this->cmd_vel.publish(this->msg);
@@ -136,8 +139,8 @@ int main(int argc, char **argv){
     ros::ServiceServer service= n.advertiseService("v2_race_service", Service_callback);
 
 
-    auto player1 = Turtle("player1","player1/pose", "player1/cmd_vel");
-    auto player2 = Turtle("player2","player2/pose", "player2/cmd_vel");
+    auto player1 = Turtle("Amazing_Turtle_1","player1/pose", "player1/cmd_vel");
+    auto player2 = Turtle("Amazing_Turtle_2","player2/pose", "player2/cmd_vel");
 
 
 
@@ -156,6 +159,7 @@ int main(int argc, char **argv){
                 player1.start();
                 player2.start();
 
+                ROS_INFO("\n\n\nTURTLE RACE START --->\n");
                 start = false;
                 need_to_kill = true;
             }
