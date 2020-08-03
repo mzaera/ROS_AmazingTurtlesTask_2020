@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>     
 #include "ros/ros.h"
 
 #include "std_msgs/String.h"
@@ -17,40 +18,52 @@ class Turtle_Srv
 private:
 
     ros::NodeHandle n;
-    ros::Subscriber sub;
-    ros::Publisher cmd_vel_pub;
+
+    ros::Publisher cmd_vel_player1;
+    ros::Publisher cmd_vel_player2;
+
     ros::ServiceServer service;
 
     geometry_msgs::Twist msg;
 
     bool service_bool;
+    int part;
+
+
       
 
 public:
     Turtle_Srv()
     {
         this->n = ros::NodeHandle();
-        this->cmd_vel_pub =  n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-        this->service = n.advertiseService("ninja_service", &Turtle_Srv::Service_callback, this);
+        this->cmd_vel_player1 =  n.advertise<geometry_msgs::Twist>("player1/cmd_vel", 1000);
+        this->cmd_vel_player2 =  n.advertise<geometry_msgs::Twist>("player2/cmd_vel", 1000);
+        this->service = n.advertiseService("race_service", &Turtle_Srv::Service_callback, this);
         
-
         ros::Duration(0.2).sleep();
+
         this->kill("turtle1");
         this->spawn_turtle(1.0,7.5,"player1");
         this->spawn_turtle(1.0,5.0,"player2");
 
-        ros::Duration(1).sleep();
+        ros::Duration(0.2).sleep();
     }
 
     void run(){
 
-        ros::Rate loop_rate(100);
+        ros::Rate loop_rate(10);
 
         while (ros::ok())
         {
-          if(this->service_bool){
-            this->cmd_vel_pub.publish(this->msg);
-          }
+
+            if(this->service_bool){
+
+                this->race();
+
+            }else{
+                this->part=0;
+            }
+
             ros::spinOnce();
             loop_rate.sleep();
         }
@@ -80,6 +93,13 @@ public:
         client.call(srv);
     }
 
+    float RandomFloat(float a, float b) {
+        float random = ((float) rand()) / (float) RAND_MAX;
+        float diff = b - a;
+        float r = random * diff;
+        return a + r;
+    }
+
     bool Service_callback(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response)
     {
       if(request.data){
@@ -95,7 +115,33 @@ public:
       return true;
     }
 
-};
+    void race(){
+
+        switch(this->part){
+
+            case 0:
+                this->kill("player1");
+                this->kill("player2");                
+                this->spawn_turtle(1.0,7.5,"player1");
+                this->spawn_turtle(1.0,5.0,"player2");
+                ros::Duration(0.2).sleep();
+                this->part++;
+            break;
+
+            case 1:
+                    this->msg.linear.x = this->RandomFloat( 1.0, 2.5 );
+                    this->cmd_vel_player1.publish(this->msg);
+                    this->msg.linear.x = this->RandomFloat( 1.0, 2.5 );
+                    this->cmd_vel_player2.publish(this->msg);
+
+            break;
+
+            case 2:
+
+            break;
+        }
+    }
+};  
 
 
 int main(int argc, char **argv){
