@@ -143,14 +143,16 @@ int main(int argc, char **argv){
     auto player2 = Turtle("Amazing_Turtle_2","player2/pose", "player2/cmd_vel");
 
 
-
-
+    ros::Time init_time = ros::Time::now();
+    ros::Time current_time;
+    ros::Duration max_time(20.0);
 
     ros::Rate loop_rate(1000);
     while (ros::ok())
     {
         if(service_bool){
             if (start){
+                init_time = ros::Time::now();
                 kill("turtle1");
                 spawn(1.0,6.54,"player1");
                 spawn(1.0,4.54,"player2");
@@ -166,7 +168,12 @@ int main(int argc, char **argv){
 
         player1.run();
         player2.run();
-       
+        current_time = ros::Time::now();
+
+        if((current_time-init_time) > max_time){
+            service_bool=false;
+        }
+
 
         }else if (need_to_kill){
 
