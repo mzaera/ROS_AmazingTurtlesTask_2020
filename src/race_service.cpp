@@ -13,96 +13,69 @@
 #include <std_srvs/SetBool.h>
 
 
-class Turtle_Srv
-{
+/*--------------------------------------------------Object part-------------------------------------------*/
+
+class Turtle{
 private:
 
-    ros::NodeHandle n;
-
+    ros::NodeHandle nh;
+    ros::Publisher cmd_vel;
     ros::Subscriber sub;
-    ros::Subscriber sub2;
 
-    ros::Publisher cmd_vel_player1;
-    ros::Publisher cmd_vel_player2;
-
-    ros::ServiceServer service;
-
-    turtlesim::Pose player1_actual_pose;
-    turtlesim::Pose player2_actual_pose;
-
-
-
+    std::string name;
+    turtlesim::Pose actual_pose;
     geometry_msgs::Twist msg;
 
-    bool service_bool;
-    int part;
+    ros::Time start_time;
 
+    bool info;
 
-      
 
 public:
-    Turtle_Srv()
+    Turtle(std::string turtle_name, std::string sub_topic, std::string pub_topic)
     {
-        this->n = ros::NodeHandle();
-        this->cmd_vel_player1 =  n.advertise<geometry_msgs::Twist>("player1/cmd_vel", 1000);
-        this->cmd_vel_player2 =  n.advertise<geometry_msgs::Twist>("player2/cmd_vel", 1000);
-        this->service = n.advertiseService("race_service", &Turtle_Srv::Service_callback, this);
-        
-        this->sub = n.subscribe("player1/pose", 1000, &Turtle_Srv::pose_Callback_player1, this );
-        this->sub2 = n.subscribe("player2/pose", 1000, &Turtle_Srv::pose_Callback_player2, this );
+        this->nh = ros::NodeHandle();
+        this->name = turtle_name;
+        this->sub = nh.subscribe(sub_topic, 1000, &Turtle::pose_Callback, this );
+        this->cmd_vel =  nh.advertise<geometry_msgs::Twist>(pub_topic, 1000);
 
-        ros::Duration(0.2).sleep();
+        ros::Duration(0.1).sleep();
+    }
 
-        this->kill("turtle1");
-        this->spawn_turtle(1.0,7.5,"player1");
-        this->spawn_turtle(1.0,5.0,"player2");
-
-        ros::Duration(0.2).sleep();
+    void pose_Callback(const turtlesim::PoseConstPtr& pose){
+        this->actual_pose.x = pose->x;
     }
 
     void run(){
+        if(this->actual_pose.x < 7.0 ){
+            this->msg.linear.x = this->RandomFloat( 0.5, 2.5 );
+            this->cmd_vel.publish(this->msg);
+            this->info=true;
+        }else{
+            this->msg.linear.x = 0.0;
+            this->cmd_vel.publish(this->msg);
+            if(info){
+                ROS_INFO("THE TURTLE CALLED:");
+                ROS_INFO_STREAM(this->name);
+                ROS_INFO("JUST FINISHED THE RACE! \n\n");
 
-        ros::Rate loop_rate(10);
-
-        while (ros::ok())
-        {
-
-            if(this->service_bool){
-
-                this->race();
-
-            }else{
-                this->part=0;
+                this->info=false;
             }
-
-            ros::spinOnce();
-            loop_rate.sleep();
         }
+
     }
 
-    void spawn_turtle(float x, float y, std::string turtle_name){
+    void start(){
+        this->start_time = ros::Time::now();
+        ros::Duration timeout(1.0); 
+        while(ros::Time::now() - this->start_time < timeout) {
+            this->msg.linear.x = 0.0;
+            this->cmd_vel.publish(this->msg);
+            this->info=false;
+        }
 
-        ros::ServiceClient client = n.serviceClient<turtlesim::Spawn>("spawn");
-        turtlesim::Spawn srv;
-
-        srv.request.x = x;
-        srv.request.y = y;
-        srv.request.theta = 0;
-        srv.request.name = turtle_name;
-
-        client.call(srv);
     }
 
-
-    void kill(std::string turtle_name){
-
-        ros::ServiceClient client = n.serviceClient<turtlesim::Kill>("kill");
-        turtlesim::Kill srv;
-
-        srv.request.name = turtle_name ;
-
-        client.call(srv);
-    }
 
     float RandomFloat(float a, float b) {
         float random = ((float) rand()) / (float) RAND_MAX;
@@ -111,77 +84,110 @@ public:
         return a + r;
     }
 
-    bool Service_callback(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response)
-    {
-      if(request.data){
+};      
+
+
+
+/*------------------------------------------Not more in object part--------------------------------------*/
+
+bool service_bool = false;
+bool start = true;
+bool need_to_kill;
+
+bool Service_callback(std_srvs::SetBool::Request& request, std_srvs::SetBool::Response& response)
+{
+    if(request.data){
         response.success = true;
-        response.message="RACE STARTS!!!!!";
-        this->service_bool = true;
-      }else{
+        response.message="SERVICE STARTS";
+        service_bool = true;
+    }else{
         response.success = true;
-        response.message="RACE STOPED";
-        this->service_bool = false ;
+        response.message="SERVICE STOPS";
+        service_bool = false ;
       }
 
-      return true;
+    return true;
+}
+
+void kill(std::string turtle_name){
+    ros::NodeHandle n_tokill;
+    ros::ServiceClient client = n_tokill.serviceClient<turtlesim::Kill>("kill");
+    turtlesim::Kill srv;
+    srv.request.name = turtle_name ;
+    client.call(srv);
+}
+
+void spawn(float x, float y, std::string turtle_name){
+    ros::NodeHandle n_tospawn;
+    ros::ServiceClient client = n_tospawn.serviceClient<turtlesim::Spawn>("spawn");
+    turtlesim::Spawn srv;
+    srv.request.x = x;
+    srv.request.y = y;
+    srv.request.theta = 0;
+    srv.request.name = turtle_name;
+
+    client.call(srv);
+
     }
-
-    void pose_Callback_player1(const turtlesim::PoseConstPtr& pose){
-        this->player1_actual_pose.x = pose->x;
-    }
-
-    void pose_Callback_player2(const turtlesim::PoseConstPtr& pose){
-        this->player2_actual_pose.x = pose->x;
-    }
-
-    void race(){
-
-        switch(this->part){
-
-            case 0:
-                this->kill("player1");
-                this->kill("player2");                
-                this->spawn_turtle(1.0,7.5,"player1");
-                this->spawn_turtle(1.0,5.0,"player2");
-                ros::Duration(0.2).sleep();
-                this->part++;
-            break;
-
-            case 1:
-               // if(this->player1_actual_pose.x < 10 && this->player2_actual_pose.x < 10 ){
-                    this->msg.linear.x = this->RandomFloat( 1.0, 2.5 );
-                    this->cmd_vel_player1.publish(this->msg);
-                    this->msg.linear.x = this->RandomFloat( 1.0, 2.5 );
-                    this->cmd_vel_player2.publish(this->msg);
-              //  }else{
-                    this->part++;
-               // }
-            break;
-
-            case 2:
-                //this->service_bool=false;
-            break;
-        }
-    }
-};  
 
 
 int main(int argc, char **argv){
 
     ros::init(argc, argv, "race_service");
+    ros::NodeHandle n;
 
-    auto controller = Turtle_Srv();
-    controller.run();
+    ros::ServiceServer service= n.advertiseService("race_service", Service_callback);
 
+
+    auto player1 = Turtle("Amazing_Turtle_1","player1/pose", "player1/cmd_vel");
+    auto player2 = Turtle("Amazing_Turtle_2","player2/pose", "player2/cmd_vel");
+
+
+    ros::Time init_time = ros::Time::now();
+    ros::Time current_time;
+    ros::Duration max_time(20.0);
+
+    ros::Rate loop_rate(1000);
+    while (ros::ok())
+    {
+        if(service_bool){
+            if (start){
+                init_time = ros::Time::now();
+                kill("turtle1");
+                spawn(1.0,6.54,"player1");
+                spawn(1.0,4.54,"player2");
+                ros::Duration(0.2).sleep();
+
+                player1.start();
+                player2.start();
+
+                ROS_INFO("\n\n\nTURTLE RACE START --->\n");
+                start = false;
+                need_to_kill = true;
+            }
+
+        player1.run();
+        player2.run();
+        current_time = ros::Time::now();
+
+        if((current_time-init_time) > max_time){
+            service_bool=false;
+        }
+
+
+        }else if (need_to_kill){
+
+            kill("player1");
+            kill("player2");
+
+            spawn(5.544445,5.544445,"turtle1");
+            start = true;
+
+            need_to_kill = false;
+        }
+
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
