@@ -24,7 +24,6 @@ Beginner.cpp will print the name "MARTI" in a ROS topic called name_topic.
 
 Terminal 1, in the catkin folder:
 ```bash
-catkin_make
 roslaunch amazing_turtles beginner.launch
 ```
 
@@ -44,7 +43,6 @@ Normal_Part1.cpp reads the ROS topic called name_topic, and will print its info 
 
 Terminal, in the catkin folder:
 ```bash
-catkin_make
 roslaunch amazing_turtles normal_Part1.launch
 ```
 
@@ -60,7 +58,6 @@ Normal_Part2.cpp creates a triangular path using the turtlebot simulator.
 
 Terminal, in the catkin folder:
 ```bash
-catkin_make
 roslaunch amazing_turtles normal_Part2.launch
 ```
 
@@ -75,7 +72,6 @@ Ninja_service.cpp creates a service that allows you to control the turtle with t
 
 Terminal 1, in the catkin folder:
 ```bash
-catkin_make
 roscore
 ```
 
@@ -96,11 +92,30 @@ Terminal 4:
 ```bash
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=keyboard/cmd_vel
 ```
+## 6. Race
+
+Race.launch runs the turtlesim_node.cpp from turtlesim.pkg and race_service.cpp programs.
+
+Race_service.cpp creates a service that creates a race between turtles when you send TRUE and stops it  when he recives a FALSE. Itprints the results on the terminal. If you don't send FALSE to the service it will automatically end after 20 sec.
 
 
-## 6. Contributing
+### Usage
+
+Terminal 1, in the catkin folder:
+```bash
+roslaunch amazing_turtles race.launch
+```
+Terminal 2:
+```bash
+rosservice call /race_service "data: false"
+```
+```bash
+rosservice call /race_service "data: true"
+```
+
+## 7. Contributing
 Corrections are welcome. For major changes, please contact Marti Zaera (martizaera99@gmail.com).
 
 
-## 7. License
+## 8. License
 [RobotCraft](https://robotcraft.ingeniarius.pt/)
