@@ -1,60 +1,58 @@
-#include <iostream>
-#include <stdlib.h>     
 #include "ros/ros.h"
 
-#include "std_msgs/String.h"
-#include "geometry_msgs/Twist.h"
+#include <actionlib/server/simple_action_server.h>
+#include "amazing_turtles/maxvelAction.h"
 
-#include <std_srvs/SetBool.h>
-
-
-/*--------------------------------------------------Object part-------------------------------------------*/
+//--------------------------------------------------Object part-------------------------------------------
 
 class Turtle{
-private:
+protected:
 
-    ros::NodeHandle nh;
-    ros::Publisher cmd_vel_pub;
+    ros::NodeHandle nh_;
 
-    geometry_msgs::Twist msg;
+    std::string action_name_;
+
+    actionlib::SimpleActionServer<amazing_turtles::maxvelAction> action_server_;
+
+    amazing_turtles::maxvelFeedback feedback_;
+    amazing_turtles::maxvelResult result_;
 
 public:
-    Turtle()
-    {
-        this->nh = ros::NodeHandle();
-        this->cmd_vel_pub =  nh.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 1000);
+    Turtle(std::string name):
 
-        ros::Duration(0.1).sleep();
+        action_server_(nh_, name, boost::bind(&Turtle::execute, this, _1), false),
+        action_name_(name)
+        {
+            action_server_.start();
+        } 
+
+
+    ~Turtle(void)
+    {
     }
 
-    void run(){
+    void start(){
 
-        ros::Rate loop_rate(10);
-        while (ros::ok())
-        {
-            this->msg.linear.x = 1.0;
-            this->msg.angular.z = 1.0;
 
-            this->cmd_vel_pub.publish(this->msg);
+    }
 
-            ros::spinOnce();
-            loop_rate.sleep();
-        }
+    void execute(const amazing_turtles::maxvelGoalConstPtr &goal){
+
     }
 
 };      
 
 
 
-/*------------------------------------------Not more in object part--------------------------------------*/
+//------------------------------------------Not more in object part--------------------------------------
 
 int main(int argc, char **argv){
 
     ros::init(argc, argv, "rotation_act");
 
-    auto player = Turtle();
-    player.run();
+    Turtle player("rotation");
 
+    ros::spin();
 
     return 0;
 }
