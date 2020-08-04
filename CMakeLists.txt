@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   actionlib_msgs
   message_generation
+  actionlib
 )
 
 ## System dependencies are found with CMake's conventions
@@ -240,5 +241,8 @@ target_link_libraries(rotation_act
 ${catkin_LIBRARIES}
 )
 
-
+add_dependencies(
+  rotation_act
+  ${amazing_turtles_EXPORTED_TARGETS}
+)
 

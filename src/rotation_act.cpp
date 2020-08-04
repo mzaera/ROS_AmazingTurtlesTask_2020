@@ -1,7 +1,7 @@
 #include "ros/ros.h"
 
 #include <actionlib/server/simple_action_server.h>
-#include "amazing_turtles/maxvelAction.h"
+#include "amazing_turtles/MaxvelAction.h"
 
 //--------------------------------------------------Object part-------------------------------------------
 
@@ -12,10 +12,10 @@ protected:
 
     std::string action_name_;
 
-    actionlib::SimpleActionServer<amazing_turtles::maxvelAction> action_server_;
+    actionlib::SimpleActionServer<amazing_turtles::MaxvelAction> action_server_;
 
-    amazing_turtles::maxvelFeedback feedback_;
-    amazing_turtles::maxvelResult result_;
+    amazing_turtles::MaxvelFeedback feedback_;
+    amazing_turtles::MaxvelResult result_;
 
 public:
     Turtle(std::string name):
@@ -31,13 +31,37 @@ public:
     {
     }
 
-    void start(){
+    void execute(const amazing_turtles::MaxvelGoalConstPtr &goal){
+
+        ros::Rate r(1);
+        bool success = true;
 
 
-    }
+        ROS_INFO("HI MARTI");
 
-    void execute(const amazing_turtles::maxvelGoalConstPtr &goal){
 
+        for(int i=1; i<=goal->order; i++)
+        {
+            if (action_server_.isPreemptRequested() || !ros::ok())
+            {
+            ROS_INFO("%s: Preempted", action_name_.c_str());
+            action_server_.setPreempted();
+            success = false;
+            break;
+            }
+
+        feedback_.sequence = i;
+
+        action_server_.publishFeedback(feedback_);
+        r.sleep();
+        }
+
+        if(success)
+        {
+            result_.sequence = feedback_.sequence;
+            ROS_INFO("%s: Succeeded", action_name_.c_str());
+            action_server_.setSucceeded(result_);
+        }
     }
 
 };      
