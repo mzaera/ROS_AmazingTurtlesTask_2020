@@ -1,0 +1,10 @@
+<launch>
+
+	<node pkg="turtlesim" type="turtlesim_node" name="turtlesim" output="screen"/>
+
+	<node pkg="amazing_turtles" type="rotation_act" name="controller" output="screen">
+	</node>
+
+
+
+</launch>

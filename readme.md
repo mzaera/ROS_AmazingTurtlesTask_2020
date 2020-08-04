@@ -3,9 +3,11 @@
 ## 1. Installation
 
 You can obtain the package form [GitHub](https://github.com/mzaera/RobotCraft_ROS_Task). Or using terminal:
-
 ```bash
+cd ~/catkin_ws/src
 git clone https://github.com/mzaera/RobotCraft_ROS_Task.git
+cd ~/catkin_ws
+catkin_make
 ```
 If you can not use the package, try to source the catkin_ws with the following command:
  
@@ -119,3 +121,5 @@ Corrections are welcome. For major changes, please contact Marti Zaera (martizae
 
 ## 8. License
 [RobotCraft](https://robotcraft.ingeniarius.pt/)
+
+

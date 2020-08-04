@@ -1,0 +1,10 @@
+#Goal
+float32 max_speed
+
+---
+#Result
+bool done
+
+---
+#Feedback
+float32 current_speed
