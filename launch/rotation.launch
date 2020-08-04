@@ -3,6 +3,8 @@
 	<node pkg="turtlesim" type="turtlesim_node" name="turtlesim" output="screen"/>
 
 	<node pkg="amazing_turtles" type="rotation_act" name="controller" output="screen">
+		<remap from="cmd_vel" to="turtle1/cmd_vel"/>
+
 	</node>
 
 

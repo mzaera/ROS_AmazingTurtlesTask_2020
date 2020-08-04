@@ -1,5 +1,8 @@
 #include "ros/ros.h"
 
+#include "std_msgs/String.h"
+#include "geometry_msgs/Twist.h"
+
 #include <actionlib/server/simple_action_server.h>
 #include "amazing_turtles/MaxvelAction.h"
 
@@ -8,22 +11,25 @@
 class Turtle{
 protected:
 
-    ros::NodeHandle nh_;
+    ros::NodeHandle nh;
 
-    std::string action_name_;
+    std::string action_name;
+    actionlib::SimpleActionServer<amazing_turtles::MaxvelAction> action_server;
+    amazing_turtles::MaxvelFeedback feedback;
+    amazing_turtles::MaxvelResult result;
 
-    actionlib::SimpleActionServer<amazing_turtles::MaxvelAction> action_server_;
+    ros::Publisher cmd_vel_pub;
+    geometry_msgs::Twist msg;
 
-    amazing_turtles::MaxvelFeedback feedback_;
-    amazing_turtles::MaxvelResult result_;
 
 public:
     Turtle(std::string name):
 
-        action_server_(nh_, name, boost::bind(&Turtle::execute, this, _1), false),
-        action_name_(name)
+        action_server(nh, name, boost::bind(&Turtle::execute, this, _1), false),
+        action_name(name)
         {
-            action_server_.start();
+            init();
+            action_server.start();
         } 
 
 
@@ -31,36 +37,48 @@ public:
     {
     }
 
+    void init(){
+        cmd_vel_pub =  nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        msg.linear.x = 0.0;
+        msg.angular.z = 0.0;
+        cmd_vel_pub.publish(msg);
+    }
+
+private:
     void execute(const amazing_turtles::MaxvelGoalConstPtr &goal){
 
-        ros::Rate r(1);
+        ros::Rate r(10);
         bool success = true;
 
 
-        ROS_INFO("HI MARTI");
+        ROS_INFO("ACTION SERVER STARTS");
 
 
-        for(int i=1; i<=goal->order; i++)
+        for(float i=0.0; i<=goal->max_vel; i+=0.1)
         {
-            if (action_server_.isPreemptRequested() || !ros::ok())
+            if (action_server.isPreemptRequested() || !ros::ok())
             {
-            ROS_INFO("%s: Preempted", action_name_.c_str());
-            action_server_.setPreempted();
+            ROS_INFO("%s: Preempted", action_name.c_str());
+            action_server.setPreempted();
             success = false;
             break;
             }
 
-        feedback_.sequence = i;
+            msg.linear.x = i;
+            msg.angular.z = i;
+            cmd_vel_pub.publish(msg);
 
-        action_server_.publishFeedback(feedback_);
-        r.sleep();
+            feedback.current_vel = i;
+
+            action_server.publishFeedback(feedback);
+            r.sleep();
         }
 
         if(success)
         {
-            result_.sequence = feedback_.sequence;
-            ROS_INFO("%s: Succeeded", action_name_.c_str());
-            action_server_.setSucceeded(result_);
+            result.final_vel = feedback.current_vel;
+            ROS_INFO("%s: Succeeded", action_name.c_str());
+            action_server.setSucceeded(result);
         }
     }
 
@@ -76,10 +94,10 @@ int main(int argc, char **argv){
     ros::NodeHandle n;
     Turtle player("rotation");
 
-    ros::Rate loop_rate(0.5);
+    ros::Rate loop_rate(10);
     while (ros::ok())
     {
-        ROS_INFO("Action server working");
+        //ROS_INFO("Action server working...");
         ros::spinOnce();
         loop_rate.sleep();
     }
