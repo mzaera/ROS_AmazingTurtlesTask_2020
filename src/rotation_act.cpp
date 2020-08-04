@@ -73,10 +73,15 @@ public:
 int main(int argc, char **argv){
 
     ros::init(argc, argv, "rotation_act");
-
+    ros::NodeHandle n;
     Turtle player("rotation");
 
-    ros::spin();
-
+    ros::Rate loop_rate(0.5);
+    while (ros::ok())
+    {
+        ROS_INFO("Action server working");
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
     return 0;
 }

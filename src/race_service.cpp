@@ -141,6 +141,7 @@ int main(int argc, char **argv){
 
     auto player1 = Turtle("Amazing_Turtle_1","player1/pose", "player1/cmd_vel");
     auto player2 = Turtle("Amazing_Turtle_2","player2/pose", "player2/cmd_vel");
+    auto player3 = Turtle("Amazing_Turtle_3","player3/pose", "player3/cmd_vel");
 
 
     ros::Time init_time = ros::Time::now();
@@ -156,10 +157,13 @@ int main(int argc, char **argv){
                 kill("turtle1");
                 spawn(1.0,6.54,"player1");
                 spawn(1.0,4.54,"player2");
+                spawn(1.0,2.54,"player3");
+
                 ros::Duration(0.2).sleep();
 
                 player1.start();
                 player2.start();
+                player3.start();
 
                 ROS_INFO("\n\n\nTURTLE RACE START --->\n");
                 start = false;
@@ -168,6 +172,9 @@ int main(int argc, char **argv){
 
         player1.run();
         player2.run();
+        player3.run();
+  
+
         current_time = ros::Time::now();
 
         if((current_time-init_time) > max_time){
@@ -179,6 +186,7 @@ int main(int argc, char **argv){
 
             kill("player1");
             kill("player2");
+            kill("player3");
 
             spawn(5.544445,5.544445,"turtle1");
             start = true;
