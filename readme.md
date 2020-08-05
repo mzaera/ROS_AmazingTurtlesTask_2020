@@ -115,11 +115,65 @@ rosservice call /race_service "data: false"
 rosservice call /race_service "data: true"
 ```
 
-## 7. Contributing
+## 7. Rotation
+
+Rotation.launch runs the turtlesim_node.cpp from turtlesim.pkg and rotation_act.cpp programs.
+
+Rotation_act.cpp creates an action server that is waitting for a max velocity. The turtle starts to increase his velocity and prints the current velocity into /rotation/feedback topic, when the mzx_vel is reach the turtle stops and print the final velocity into /rotation/result topic. The order can be canceled sending a msg into /rotation/cancel topic.
+
+### Usage
+Besure that you have done:
+
+```bash
+source devel/setup.bash
+```
+
+In all the terminals that you are going to use.
+
+
+Terminal 1, in the catkin folder:
+```bash
+roslaunch amazing_turtles rotation.launch
+```
+Extra terminals:
+
+- To see the final vel
+```bash
+rostopic echo /rotation/result
+```
+- To see the current vel 
+```bash
+rostopic echo /rotation/feedback
+```
+
+- To cancel the order
+```bash
+rostopic pub /rotation/cancel actionlib_msgs/GoalID "stamp:
+  secs: 0
+  nsecs: 0
+id: ''"
+```
+- To send the max vel 
+```bash
+rostopic pub /rotation/goal amazing_turtles/MaxvelActionGoal "header:
+  seq: 0
+  stamp:
+    secs: 0
+    nsecs: 0
+  frame_id: ''
+goal_id:
+  stamp:
+    secs: 0
+    nsecs: 0
+  id: ''
+  max_vel: 0.0" 
+```
+
+## 8. Contributing
 Corrections are welcome. For major changes, please contact Marti Zaera (martizaera99@gmail.com).
 
 
-## 8. License
+## 9. License
 [RobotCraft](https://robotcraft.ingeniarius.pt/)
 
 
