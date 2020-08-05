@@ -128,7 +128,7 @@ void spawn(float x, float y, std::string turtle_name){
 
     client.call(srv);
 
-    }
+}
 
 
 int main(int argc, char **argv){
