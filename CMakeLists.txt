@@ -62,6 +62,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_action_files(
 	FILES
   Maxvel.action
+  Race.action
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -246,3 +247,13 @@ add_dependencies(
   ${amazing_turtles_EXPORTED_TARGETS}
 )
 
+add_executable(action_race src/action_race.cpp)
+
+target_link_libraries(action_race
+${catkin_LIBRARIES}
+)
+
+add_dependencies(
+  action_race
+  ${amazing_turtles_EXPORTED_TARGETS}
+)

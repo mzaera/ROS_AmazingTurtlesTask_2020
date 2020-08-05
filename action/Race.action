@@ -1,0 +1,8 @@
+#goal definition
+float32 final_pos
+---
+#result definition
+string final_winner
+---
+#feedback
+string current_winner
