@@ -168,6 +168,62 @@ goal_id:
   id: ''
   max_vel: 0.0" 
 ```
+## 8. Action_race
+
+Action_race.launch runs the turtlesim_node.cpp from turtlesim.pkg and action_race.cpp programs.
+
+Action_race.cpp creates an action server that is waitting for a final position. Once sended a final pose to the goal topic, Action_race.cpp kills the main turtle and generates a race between four turtles. The velocity of each turtle will be generated randomly. During the race the current winner will be published in /race/feedback topic. The final winner will be published in /race/result ros topic.
+
+Usually Turtle number 4 will  have more winning probability due a code problem. That can be fixed using difernts threats when the program checks the current position of each turtle.  
+
+### Usage
+Besure that you have done:
+
+```bash
+source devel/setup.bash
+```
+
+In all the terminals that you are going to use.
+
+
+Terminal 1, in the catkin folder:
+```bash
+roslaunch amazing_turtles action_race.launch
+```
+Extra terminals:
+
+- To see the final winner
+```bash
+rostopic echo /race/result
+```
+- To see the current winner 
+```bash
+rostopic echo /race/feedback
+```
+
+- To cancel the race
+```bash
+rostopic pub /race/cancel actionlib_msgs/GoalID "stamp:
+  secs: 0
+  nsecs: 0
+id: ''"
+```
+- To send the max vel 
+```bash
+rostopic pub /race/goal amazing_turtles/RaceActionGoal "header:
+  seq: 0
+  stamp:
+    secs: 0
+    nsecs: 0
+  frame_id: ''
+goal_id:
+  stamp:
+    secs: 0
+    nsecs: 0
+  id: ''
+goal:
+  final_pos: 0.0" 
+```
 
 ## 8. Contributing
 Corrections are welcome. For major changes, please contact Marti Zaera (martizaera99@gmail.com).
