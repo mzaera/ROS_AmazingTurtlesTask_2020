@@ -225,11 +225,11 @@ goal:
   final_pos: 0.0" 
 ```
 
-## 8. Contributing
+## 9. Contributing
 Corrections are welcome. For major changes, please contact Marti Zaera (martizaera99@gmail.com).
 
 
-## 9. License
+## 10. License
 [RobotCraft](https://robotcraft.ingeniarius.pt/)
 
 
