@@ -2,7 +2,7 @@
 
 ## 1. Installation
 
-You can obtain the package form [GitHub](https://github.com/mzaera/RobotCraft_ROS_Task). Or using terminal:
+You can obtain the package form [GitHub](https://github.com/mzaera/ROS_AmazingTurtlesTask_2020). Or using terminal:
 ```bash
 cd ~/catkin_ws/src
 git clone https://github.com/mzaera/RobotCraft_ROS_Task.git
