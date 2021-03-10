@@ -5,7 +5,7 @@
 You can obtain the package form [GitHub](https://github.com/mzaera/ROS_AmazingTurtlesTask_2020). Or using terminal:
 ```bash
 cd ~/catkin_ws/src
-git clone https://github.com/mzaera/RobotCraft_ROS_Task.git
+git clone https://github.com/mzaera/ROS_AmazingTurtlesTask_2020.git
 cd ~/catkin_ws
 catkin_make
 ```
