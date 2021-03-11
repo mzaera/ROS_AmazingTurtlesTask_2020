@@ -208,7 +208,7 @@ rostopic pub /race/cancel actionlib_msgs/GoalID "stamp:
   nsecs: 0
 id: ''"
 ```
-- To send the max vel 
+- To start modify the final_pos and send it 
 ```bash
 rostopic pub /race/goal amazing_turtles/RaceActionGoal "header:
   seq: 0
